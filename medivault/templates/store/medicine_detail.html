@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}{{ medicine.name }} — MediVault{% endblock %}
+{% block content %}
+<div class="container wrap">
+
+  <div class="detail-hero">
+    <div>
+      <div class="detail-emoji-box">{{ medicine.image_emoji }}</div>
+    </div>
+    <div>
+      {% if medicine.requires_prescription %}<span class="rx-badge">Rx Required</span>{% endif %}
+      <h1 style="margin-top:10px;">{{ medicine.name }}</h1>
+      <p style="color:#71705f;margin-top:-8px;">{{ medicine.company }} · {{ medicine.get_form_display }} {% if medicine.composition %}· {{ medicine.composition }}{% endif %}</p>
+      {% if avg_rating %}<p class="rating-stars">{% for i in "12345" %}{% if forloop.counter <= avg_rating %}★{% else %}☆{% endif %}{% endfor %} <span class="help-text">({{ reviews.count }} review{{ reviews.count|pluralize }})</span></p>{% endif %}
+
+      <p>{{ medicine.description }}</p>
+
+      <div class="panel" style="margin:20px 0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+          <div>
+            <div class="price-tag" style="font-size:1.6rem;">₹{{ medicine.price }}</div>
+            {% if medicine.is_out_of_stock %}
+              <div class="stock-note out">Out of stock</div>
+            {% elif medicine.is_low_stock %}
+              <div class="stock-note low">Only {{ medicine.quantity }} units left — order soon</div>
+            {% else %}
+              <div class="stock-note">✓ {{ medicine.quantity }} in stock</div>
+            {% endif %}
+            <div class="help-text mono">Batch {{ medicine.batch_no }} · Exp {{ medicine.expiry|date:"M Y" }}</div>
+          </div>
+          <form action="{% url 'store:cart_add' medicine.id %}" method="post" style="display:flex;gap:10px;align-items:center;">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <input type="number" name="quantity" value="1" min="1" max="{{ medicine.quantity }}" style="width:80px;" {% if medicine.is_out_of_stock %}disabled{% endif %}>
+            <button type="submit" class="btn btn-primary" {% if medicine.is_out_of_stock %}disabled{% endif %}>Add to Cart</button>
+          </form>
+        </div>
+        {% if medicine.requires_prescription %}
+          <p class="help-text" style="margin-top:12px;">⚕️ This medicine requires a valid prescription. You'll be asked to upload one at checkout.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-top:36px;">
+    <div>
+      {% if medicine.uses_list %}
+      <div class="panel">
+        <h3>Uses</h3>
+        <ul class="tag-list">{% for u in medicine.uses_list %}<li>{{ u }}</li>{% endfor %}</ul>
+      </div>
+      {% endif %}
+
+      {% if medicine.dosage %}
+      <div class="panel">
+        <h3>Dosage Guidance</h3>
+        <p>{{ medicine.dosage }}</p>
+        <p class="help-text">This is general product information, not a substitute for advice from your doctor or pharmacist.</p>
+      </div>
+      {% endif %}
+
+      {% if medicine.side_effects_list %}
+      <div class="panel">
+        <h3>Possible Side Effects</h3>
+        <ul>{% for s in medicine.side_effects_list %}<li>{{ s }}</li>{% endfor %}</ul>
+      </div>
+      {% endif %}
+
+      {% if medicine.precautions_list %}
+      <div class="panel">
+        <h3>Precautions</h3>
+        <ul>{% for p in medicine.precautions_list %}<li>{{ p }}</li>{% endfor %}</ul>
+      </div>
+      {% endif %}
+
+      <div class="panel">
+        <h3>Customer Reviews</h3>
+        {% for r in reviews %}
+          <div style="padding:12px 0;border-bottom:1px solid var(--line);">
+            <div class="rating-stars">{% for i in "12345" %}{% if forloop.counter <= r.rating %}★{% else %}☆{% endif %}{% endfor %}
+              <span class="help-text">— {{ r.user.username }}, {{ r.created_at|date:"M Y" }}</span></div>
+            {% if r.comment %}<p style="margin:4px 0 0;">{{ r.comment }}</p>{% endif %}
+          </div>
+        {% empty %}
+          <p class="help-text">No reviews yet. Be the first to share your experience.</p>
+        {% endfor %}
+
+        {% if user.is_authenticated and user_can_review %}
+          <form method="post" style="margin-top:16px;">
+            {% csrf_token %}
+            <div class="field">{{ review_form.rating.label_tag }}{{ review_form.rating }}</div>
+            <div class="field">{{ review_form.comment.label_tag }}{{ review_form.comment }}</div>
+            <button type="submit" class="btn btn-outline">Submit Review</button>
+          </form>
+        {% elif not user.is_authenticated %}
+          <p class="help-text"><a href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to write a review.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h3>You may also need</h3>
+        {% for rel in related %}
+          <a href="{{ rel.get_absolute_url }}" style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);">
+            <span style="font-size:1.4rem;">{{ rel.image_emoji }}</span>
+            <span>
+              <div style="font-weight:600;font-size:.92rem;">{{ rel.name }}</div>
+              <div class="price-tag" style="font-size:.85rem;">₹{{ rel.price }}</div>
+            </span>
+          </a>
+        {% empty %}
+          <p class="help-text">No related medicines found.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

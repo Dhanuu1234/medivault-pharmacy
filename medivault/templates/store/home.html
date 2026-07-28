@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}MediVault — Genuine Medicines, Delivered{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow">Rx-verified · Same-day dispatch</span>
+      <h1>Your neighbourhood pharmacy, organised.</h1>
+      <p>Order genuine medicines, upload prescriptions in seconds, and track every strip from shelf to doorstep — all from one clean dashboard.</p>
+      <form action="{% url 'store:medicine_list' %}" method="get" class="search-bar">
+        <input type="text" name="q" placeholder="Search Paracetamol, Azithromycin, Vitamin C…">
+        <button type="submit">Search</button>
+      </form>
+      <div class="hero-actions">
+        <a href="{% url 'store:medicine_list' %}" class="btn btn-amber">Browse Medicines</a>
+        <a href="{% url 'store:about' %}" class="btn btn-outline" style="border-color:#f2efe2;color:#f2efe2;">How it works</a>
+      </div>
+    </div>
+    <div class="label-stack">
+      <div class="rx-label">
+        <div class="rx-top"><span>MediVault Rx</span><span>No. {{ featured.0.pk|default:"1042" }}</span></div>
+        <h3>{{ featured.0.name|default:"Paracetamol 650" }}</h3>
+        <div style="font-size:.82rem;color:#5a5344;">{{ featured.0.company|default:"Cipla" }} · {{ featured.0.get_form_display|default:"Tablet" }}</div>
+        <div class="rx-meta"><span>Batch {{ featured.0.batch_no|default:"BN48213" }}</span><span>Qty {{ featured.0.quantity|default:"250" }}</span></div>
+        <div class="rx-meta"><span>Exp {{ featured.0.expiry|date:"m/Y"|default:"01/2028" }}</span><span class="mono" style="font-weight:600;">₹{{ featured.0.price|default:"35.00" }}</span></div>
+        <div class="rx-stamp">✓ VERIFIED</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container wrap">
+
+  <div class="section-head">
+    <h2>Shop by category</h2>
+    <a href="{% url 'store:medicine_list' %}" class="see-all">View all →</a>
+  </div>
+  <div class="chip-row" style="margin-bottom:50px;">
+    {% for cat in categories %}
+      <a href="{% url 'store:medicine_list' %}?category={{ cat.id }}" class="chip"><span>{{ cat.icon }}</span> {{ cat.name }}</a>
+    {% empty %}
+      <p class="help-text">No categories yet — run <code>python manage.py seed_medicines</code> to populate the catalogue.</p>
+    {% endfor %}
+  </div>
+
+  <div class="section-head">
+    <h2>Freshly stocked</h2>
+    <a href="{% url 'store:medicine_list' %}?sort=newest" class="see-all">View all →</a>
+  </div>
+  <div class="grid" style="margin-bottom:50px;">
+    {% for med in featured %}
+      {% include "store/_medicine_card.html" %}
+    {% empty %}
+      <p class="help-text">No medicines yet. Ask your administrator to add stock from the dashboard.</p>
+    {% endfor %}
+  </div>
+
+  {% if best_sellers %}
+  <div class="section-head">
+    <h2>Most ordered</h2>
+  </div>
+  <div class="grid">
+    {% for med in best_sellers %}
+      {% include "store/_medicine_card.html" %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

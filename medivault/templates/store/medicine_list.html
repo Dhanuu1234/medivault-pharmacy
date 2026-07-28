@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Shop Medicines — MediVault{% endblock %}
+{% block content %}
+<div class="container wrap">
+  <div class="section-head">
+    <h2>All Medicines <span class="help-text mono">({{ result_count }} found)</span></h2>
+  </div>
+
+  <form method="get" class="panel" style="margin-bottom:26px;">
+    <div class="field-row" style="grid-template-columns:2fr 1fr 1fr auto;align-items:end;gap:14px;">
+      <div class="field" style="margin-bottom:0;">
+        <label>Search</label>
+        <input type="text" name="q" value="{{ form.q.value|default:'' }}" placeholder="Medicine, brand, or condition">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Category</label>
+        <select name="category">
+          <option value="">All categories</option>
+          {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if form.category.value|stringformat:"s" == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.icon }} {{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Sort by</label>
+        <select name="sort">
+          {% for value, label in form.sort.field.choices %}
+            <option value="{{ value }}" {% if form.sort.value == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Filter</button>
+    </div>
+  </form>
+
+  <div class="grid">
+    {% for med in page_obj %}
+      {% include "store/_medicine_card.html" %}
+    {% empty %}
+      <p class="help-text">No medicines matched your search. Try a different keyword or category.</p>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.has_other_pages %}
+  <div class="pagination">
+    {% if page_obj.has_previous %}<a href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">← Prev</a>{% endif %}
+    <span class="current">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">Next →</a>{% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

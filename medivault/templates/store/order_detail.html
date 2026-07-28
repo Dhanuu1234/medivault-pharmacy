@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Order {{ order.order_number }} — MediVault{% endblock %}
+{% block content %}
+<div class="container wrap">
+  <div class="section-head">
+    <h2>Order <span class="mono">{{ order.order_number }}</span></h2>
+    <span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <h3>Items</h3>
+      <table>
+        <thead><tr><th>Medicine</th><th>Price</th><th>Qty</th><th>Total</th></tr></thead>
+        <tbody>
+        {% for item in order.items.all %}
+          <tr>
+            <td>{{ item.medicine_name }}</td>
+            <td class="mono">₹{{ item.unit_price }}</td>
+            <td>{{ item.quantity }}</td>
+            <td class="mono">₹{{ item.line_total }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <div class="perforation"></div>
+      <p style="display:flex;justify-content:space-between;"><span>Subtotal</span><span class="mono">₹{{ order.subtotal }}</span></p>
+      <p style="display:flex;justify-content:space-between;"><span>Delivery</span><span class="mono">₹{{ order.delivery_fee }}</span></p>
+      <p style="display:flex;justify-content:space-between;font-weight:600;font-size:1.1rem;"><span>Total</span><span class="mono">₹{{ order.total_amount }}</span></p>
+
+      {% if order.status == 'pending' or order.status == 'processing' %}
+      <form method="post" action="{% url 'store:order_cancel' order.order_number %}" onsubmit="return confirm('Cancel this order?');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger" style="margin-top:10px;">Cancel Order</button>
+      </form>
+      {% endif %}
+    </div>
+
+    <div class="panel">
+      <h3>Shipping To</h3>
+      <p>{{ order.shipping_name }}<br>{{ order.shipping_phone }}<br>{{ order.shipping_address }}<br>{{ order.shipping_city }} - {{ order.shipping_pincode }}</p>
+      <div class="perforation"></div>
+      <p class="help-text">Payment: {{ order.get_payment_method_display }}</p>
+      <p class="help-text">Placed on {{ order.created_at|date:"d M Y, h:i A" }}</p>
+      {% if order.prescription %}<p class="help-text">📎 Prescription uploaded {% if order.prescription.verified %}(verified){% else %}(pending verification){% endif %}</p>{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

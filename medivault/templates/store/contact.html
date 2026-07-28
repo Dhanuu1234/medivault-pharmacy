@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Contact — MediVault{% endblock %}
+{% block content %}
+<div class="container wrap">
+  <h2>Contact Us</h2>
+  <div class="two-col">
+    <form method="post" class="panel">
+      {% csrf_token %}
+      <div class="field">{{ form.name.label_tag }}{{ form.name }}</div>
+      <div class="field">{{ form.email.label_tag }}{{ form.email }}</div>
+      <div class="field">{{ form.subject.label_tag }}{{ form.subject }}</div>
+      <div class="field">{{ form.message.label_tag }}{{ form.message }}</div>
+      <button type="submit" class="btn btn-primary">Send Message</button>
+    </form>
+    <div class="panel">
+      <h3>Reach us directly</h3>
+      <p class="help-text">📍 MG Road, Pune, Maharashtra</p>
+      <p class="help-text">📞 +91 90000 00000</p>
+      <p class="help-text">✉️ support@medivault.example</p>
+      <p class="help-text">🕒 Mon–Sat, 9:00 AM – 9:00 PM</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

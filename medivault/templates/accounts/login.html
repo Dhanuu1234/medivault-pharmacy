@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Log in — MediVault{% endblock %}
+{% block content %}
+<div class="container wrap" style="max-width:460px;">
+  <h2>Welcome back</h2>
+  <div class="panel">
+    <form method="post">
+      {% csrf_token %}
+      <div class="field">{{ form.username.label_tag }}{{ form.username }}</div>
+      <div class="field">{{ form.password.label_tag }}{{ form.password }}</div>
+      {% if form.errors %}<p class="help-text" style="color:var(--danger);">Incorrect username or password.</p>{% endif %}
+      <input type="hidden" name="next" value="{{ next }}">
+      <button type="submit" class="btn btn-primary btn-block">Log In</button>
+    </form>
+    <p class="help-text" style="margin-top:14px;">New to MediVault? <a href="{% url 'accounts:register' %}" style="color:var(--forest);font-weight:600;">Create an account</a></p>
+  </div>
+</div>
+{% endblock %}

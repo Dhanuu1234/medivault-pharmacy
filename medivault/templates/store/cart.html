@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Your Cart — MediVault{% endblock %}
+{% block content %}
+<div class="container wrap">
+  <h2>Your Cart</h2>
+
+  {% if cart.is_empty %}
+    <div class="panel" style="text-align:center;padding:60px 20px;">
+      <p style="font-size:2.4rem;margin-bottom:6px;">🧺</p>
+      <p>Your cart is empty.</p>
+      <a href="{% url 'store:medicine_list' %}" class="btn btn-primary" style="margin-top:14px;">Browse Medicines</a>
+    </div>
+  {% else %}
+  <div class="two-col">
+    <div class="panel">
+      <table>
+        <thead><tr><th>Medicine</th><th>Price</th><th>Qty</th><th>Subtotal</th><th></th></tr></thead>
+        <tbody>
+        {% for item in cart %}
+          <tr>
+            <td>
+              <a href="{{ item.medicine.get_absolute_url }}" style="display:flex;gap:10px;align-items:center;">
+                <span style="font-size:1.4rem;">{{ item.medicine.image_emoji }}</span>
+                <span>{{ item.medicine.name }}<br><span class="help-text">{{ item.medicine.company }}</span></span>
+              </a>
+            </td>
+            <td class="mono">₹{{ item.medicine.price }}</td>
+            <td>
+              <form action="{% url 'store:cart_update' item.medicine.id %}" method="post" style="display:flex;gap:6px;">
+                {% csrf_token %}
+                <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.medicine.quantity }}" style="width:64px;">
+                <button type="submit" class="btn btn-sm btn-outline">Update</button>
+              </form>
+            </td>
+            <td class="mono">₹{{ item.line_total }}</td>
+            <td>
+              <form action="{% url 'store:cart_remove' item.medicine.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h3>Order Summary</h3>
+      <p style="display:flex;justify-content:space-between;"><span>Subtotal</span><span class="mono">₹{{ cart.total_price }}</span></p>
+      <p style="display:flex;justify-content:space-between;color:#71705f;font-size:.85rem;"><span>Delivery</span><span class="mono">{% if cart.total_price >= 500 %}FREE{% else %}₹40{% endif %}</span></p>
+      {% if cart.requires_prescription %}
+        <p class="help-text">⚕️ One or more items need a prescription — you'll upload it at checkout.</p>
+      {% endif %}
+      <a href="{% url 'store:checkout' %}" class="btn btn-primary btn-block" style="margin-top:14px;">Proceed to Checkout</a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

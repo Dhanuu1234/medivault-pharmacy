@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Create Account — MediVault{% endblock %}
+{% block content %}
+<div class="container wrap" style="max-width:460px;">
+  <h2>Create your account</h2>
+  <div class="panel">
+    <form method="post">
+      {% csrf_token %}
+      <div class="field">{{ form.username.label_tag }}{{ form.username }}{{ form.username.errors }}</div>
+      <div class="field">{{ form.email.label_tag }}{{ form.email }}{{ form.email.errors }}</div>
+      <div class="field">{{ form.phone.label_tag }}{{ form.phone }}</div>
+      <div class="field">{{ form.password1.label_tag }}{{ form.password1 }}{{ form.password1.errors }}</div>
+      <div class="field">{{ form.password2.label_tag }}{{ form.password2 }}{{ form.password2.errors }}</div>
+      <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+    </form>
+    <p class="help-text" style="margin-top:14px;">Already have an account? <a href="{% url 'accounts:login' %}" style="color:var(--forest);font-weight:600;">Log in</a></p>
+  </div>
+</div>
+{% endblock %}

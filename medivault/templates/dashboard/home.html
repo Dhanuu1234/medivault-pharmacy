@@ -1,0 +1,54 @@
+{% extends "dashboard/_base_dashboard.html" %}
+{% block title %}Dashboard — MediVault{% endblock %}
+{% block dashboard_content %}
+<h2>Overview</h2>
+<div class="stat-grid">
+  <div class="stat-card"><div class="num">{{ stats.total_medicines }}</div><div class="label">Medicines</div></div>
+  <div class="stat-card"><div class="num">{{ stats.low_stock }}</div><div class="label">Low Stock</div></div>
+  <div class="stat-card"><div class="num">{{ stats.out_of_stock }}</div><div class="label">Out of Stock</div></div>
+  <div class="stat-card"><div class="num">{{ stats.expiring_soon }}</div><div class="label">Expiring Soon</div></div>
+  <div class="stat-card"><div class="num">{{ stats.total_orders }}</div><div class="label">Total Orders</div></div>
+  <div class="stat-card"><div class="num">{{ stats.pending_orders }}</div><div class="label">Pending Orders</div></div>
+  <div class="stat-card"><div class="num mono">₹{{ stats.revenue }}</div><div class="label">Revenue</div></div>
+</div>
+
+<div class="two-col">
+  <div class="panel">
+    <h3>Recent Orders</h3>
+    <table>
+      <thead><tr><th>Order #</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for order in recent_orders %}
+        <tr>
+          <td class="mono"><a href="{% url 'store:order_detail' order.order_number %}">{{ order.order_number }}</a></td>
+          <td>{{ order.user.username }}</td>
+          <td class="mono">₹{{ order.total_amount }}</td>
+          <td><span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4" class="help-text">No orders placed yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div>
+    <div class="panel">
+      <h3>⚠️ Low Stock</h3>
+      {% for med in low_stock_items %}
+        <p style="display:flex;justify-content:space-between;font-size:.88rem;padding:6px 0;border-bottom:1px solid var(--line);">
+          <a href="{% url 'store:dashboard_medicine_edit' med.pk %}">{{ med.name }}</a><span class="mono">{{ med.quantity }} left</span>
+        </p>
+      {% empty %}<p class="help-text">All stock levels look healthy.</p>{% endfor %}
+    </div>
+    <div class="panel">
+      <h3>⏳ Expiring Soon</h3>
+      {% for med in expiring_items %}
+        <p style="display:flex;justify-content:space-between;font-size:.88rem;padding:6px 0;border-bottom:1px solid var(--line);">
+          <a href="{% url 'store:dashboard_medicine_edit' med.pk %}">{{ med.name }}</a><span class="mono">{{ med.expiry|date:"M Y" }}</span>
+        </p>
+      {% empty %}<p class="help-text">Nothing expiring in the next 90 days.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

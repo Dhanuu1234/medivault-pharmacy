@@ -1,0 +1,50 @@
+{% extends "dashboard/_base_dashboard.html" %}
+{% block title %}Orders — MediVault{% endblock %}
+{% block dashboard_content %}
+<h2>Orders</h2>
+
+<div class="chip-row" style="margin-bottom:18px;">
+  <a href="?" class="chip {% if not status %}active{% endif %}">All</a>
+  {% for value, label in statuses %}
+    <a href="?status={{ value }}" class="chip {% if status == value %}active{% endif %}">{{ label }}</a>
+  {% endfor %}
+</div>
+
+<div class="panel">
+  <table>
+    <thead><tr><th>Order #</th><th>Customer</th><th>Date</th><th>Total</th><th>Status</th><th>Update</th></tr></thead>
+    <tbody>
+    {% for order in page_obj %}
+      <tr>
+        <td class="mono"><a href="{% url 'store:order_detail' order.order_number %}">{{ order.order_number }}</a></td>
+        <td>{{ order.user.username }}</td>
+        <td>{{ order.created_at|date:"d M Y" }}</td>
+        <td class="mono">₹{{ order.total_amount }}</td>
+        <td><span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span></td>
+        <td>
+          <form action="{% url 'store:dashboard_order_update_status' order.order_number %}" method="post" style="display:flex;gap:6px;">
+            {% csrf_token %}
+            <select name="status">
+              {% for value, label in order.Status.choices %}
+                <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-sm btn-outline">Update</button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6" class="help-text">No orders found.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if page_obj.has_other_pages %}
+<div class="pagination">
+  {% if page_obj.has_previous %}<a href="?status={{ status }}&page={{ page_obj.previous_page_number }}">← Prev</a>{% endif %}
+  <span class="current">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}<a href="?status={{ status }}&page={{ page_obj.next_page_number }}">Next →</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

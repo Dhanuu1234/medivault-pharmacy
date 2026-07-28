@@ -1,0 +1,27 @@
+{% extends "dashboard/_base_dashboard.html" %}
+{% block title %}Categories — MediVault{% endblock %}
+{% block dashboard_content %}
+<h2>Categories</h2>
+<div class="two-col">
+  <div class="panel">
+    <table>
+      <thead><tr><th>Icon</th><th>Name</th><th>Medicines</th></tr></thead>
+      <tbody>
+      {% for cat in categories %}
+        <tr><td>{{ cat.icon }}</td><td>{{ cat.name }}</td><td>{{ cat.count }}</td></tr>
+      {% empty %}
+        <tr><td colspan="3" class="help-text">No categories yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <form method="post" class="panel">
+    {% csrf_token %}
+    <h3>Add Category</h3>
+    <div class="field">{{ form.name.label_tag }}{{ form.name }}</div>
+    <div class="field">{{ form.icon.label_tag }}{{ form.icon }}<p class="help-text">A single emoji works best.</p></div>
+    <div class="field">{{ form.description.label_tag }}{{ form.description }}</div>
+    <button type="submit" class="btn btn-primary btn-block">Add Category</button>
+  </form>
+</div>
+{% endblock %}

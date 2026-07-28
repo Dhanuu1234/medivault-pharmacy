@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}My Profile — MediVault{% endblock %}
+{% block content %}
+<div class="container wrap" style="max-width:560px;">
+  <h2>My Profile</h2>
+  <div class="panel">
+    <form method="post">
+      {% csrf_token %}
+      <div class="field-row">
+        <div class="field">{{ form.first_name.label_tag }}{{ form.first_name }}</div>
+        <div class="field">{{ form.last_name.label_tag }}{{ form.last_name }}</div>
+      </div>
+      <div class="field">{{ form.email.label_tag }}{{ form.email }}</div>
+      <div class="field">{{ form.phone.label_tag }}{{ form.phone }}</div>
+      <div class="field">{{ form.address.label_tag }}{{ form.address }}</div>
+      <div class="field-row">
+        <div class="field">{{ form.city.label_tag }}{{ form.city }}</div>
+        <div class="field">{{ form.pincode.label_tag }}{{ form.pincode }}</div>
+      </div>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

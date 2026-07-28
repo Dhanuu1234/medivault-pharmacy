@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Page not found — MediVault{% endblock %}
+{% block content %}
+<div class="container wrap" style="text-align:center;padding:100px 20px;">
+  <p style="font-size:3rem;">💊</p>
+  <h2>This shelf is empty.</h2>
+  <p>We couldn't find the page you were looking for.</p>
+  <a href="{% url 'store:home' %}" class="btn btn-primary" style="margin-top:12px;">Back to Home</a>
+</div>
+{% endblock %}

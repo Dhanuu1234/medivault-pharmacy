@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}About — MediVault{% endblock %}
+{% block content %}
+<div class="container wrap">
+  <h2>About MediVault</h2>
+  <div class="two-col">
+    <div>
+      <p>MediVault is a full-stack pharmacy management system built with Django. It covers the two sides of a
+      real pharmacy: a storefront where customers can search medicines, upload prescriptions and track orders,
+      and a staff dashboard for managing stock, expiry dates and order fulfilment.</p>
+
+      <div class="panel">
+        <h3>How ordering works</h3>
+        <ol style="padding-left:18px;">
+          <li>Search or browse the catalogue by category.</li>
+          <li>Add medicines to your cart — prescription-only items are clearly labelled.</li>
+          <li>Checkout with your delivery details and, if needed, upload a prescription photo.</li>
+          <li>Track your order status from "Pending" through to "Delivered" on the Orders page.</li>
+        </ol>
+      </div>
+
+      <div class="panel">
+        <h3>Built for pharmacy operations</h3>
+        <p>The staff dashboard tracks low-stock and near-expiry medicines automatically, so restocking decisions
+        happen before a shelf runs empty rather than after.</p>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Tech stack</h3>
+      <ul class="tag-list">
+        <li>Django 5</li><li>PostgreSQL / SQLite</li><li>Whitenoise</li><li>Gunicorn</li><li>Render</li>
+      </ul>
+      <p class="help-text" style="margin-top:14px;">This is a portfolio / demonstration project. Medicine details shown are general product information and are not a substitute for professional medical advice.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

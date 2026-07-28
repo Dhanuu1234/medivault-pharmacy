@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}MediVault Pharmacy{% endblock %}</title>
+<meta name="description" content="MediVault — order genuine medicines online, track prescriptions and manage your pharmacy stock in one place.">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💊</text></svg>">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="{% url 'store:home' %}" class="brand">Medi<span>Vault</span></a>
+    <div class="nav-links">
+      <a href="{% url 'store:medicine_list' %}">Shop Medicines</a>
+      <a href="{% url 'store:about' %}">About</a>
+      <a href="{% url 'store:contact' %}">Contact</a>
+      {% if user.is_authenticated and user.is_staff_member %}<a href="{% url 'store:dashboard_home' %}">Dashboard</a>{% endif %}
+    </div>
+    <div class="nav-right">
+      {% if user.is_authenticated %}
+        <a href="{% url 'store:order_history' %}">My Orders</a>
+        <a href="{% url 'accounts:profile' %}">{{ user.first_name|default:user.username }}</a>
+        <form action="{% url 'accounts:logout' %}" method="post" style="display:inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline" style="border-color:#fff;color:#fff;">Log out</button>
+        </form>
+      {% else %}
+        <a href="{% url 'accounts:login' %}">Log in</a>
+        <a href="{% url 'accounts:register' %}" class="btn btn-sm btn-amber">Sign up</a>
+      {% endif %}
+      <a href="{% url 'store:cart' %}" class="cart-pill">🧺 Cart
+        {% if nav_cart_count %}<span class="badge">{{ nav_cart_count }}</span>{% endif %}
+      </a>
+    </div>
+  </div>
+</nav>
+
+<div class="container" style="padding-top:18px;">
+  {% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+
+<main>
+{% block content %}{% endblock %}
+</main>
+
+<footer>
+  <div class="container">
+    <div class="cols">
+      <div>
+        <h4>Medi<span style="color:#C79A5C">Vault</span></h4>
+        <p style="max-width:36ch;font-size:.88rem;">A full-stack pharmacy management platform — genuine medicines,
+        transparent stock, and a dashboard built for real pharmacy operations. Built as a portfolio project.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <p><a href="{% url 'store:medicine_list' %}">All Medicines</a></p>
+        <p><a href="{% url 'store:cart' %}">My Cart</a></p>
+        <p><a href="{% url 'accounts:register' %}">Create Account</a></p>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <p><a href="{% url 'store:about' %}">About MediVault</a></p>
+        <p><a href="{% url 'store:contact' %}">Contact Us</a></p>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <p><a href="{% url 'store:contact' %}">Help Center</a></p>
+        <p><a href="{% url 'store:order_history' %}">Track Order</a></p>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© {% now "Y" %} MediVault Pharmacy Management System</span>
+      <span class="mono">Portfolio project — not for real medical transactions</span>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

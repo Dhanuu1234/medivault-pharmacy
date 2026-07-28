@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container wrap">
+  <div class="dash-layout">
+    <div class="dash-nav">
+      <a href="{% url 'store:dashboard_home' %}" class="{% if request.resolver_match.url_name == 'dashboard_home' %}active{% endif %}">📊 Overview</a>
+      <a href="{% url 'store:dashboard_medicines' %}" class="{% if 'medicine' in request.resolver_match.url_name %}active{% endif %}">💊 Medicines</a>
+      <a href="{% url 'store:dashboard_categories' %}" class="{% if request.resolver_match.url_name == 'dashboard_categories' %}active{% endif %}">🗂️ Categories</a>
+      <a href="{% url 'store:dashboard_orders' %}" class="{% if 'orders' in request.resolver_match.url_name %}active{% endif %}">📦 Orders</a>
+      <a href="{% url 'store:dashboard_messages' %}" class="{% if request.resolver_match.url_name == 'dashboard_messages' %}active{% endif %}">✉️ Messages</a>
+      <a href="/admin/" target="_blank">⚙️ Django Admin</a>
+    </div>
+    <div>
+      {% block dashboard_content %}{% endblock %}
+    </div>
+  </div>
+</div>
+{% endblock %}

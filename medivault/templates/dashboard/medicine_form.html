@@ -1,0 +1,39 @@
+{% extends "dashboard/_base_dashboard.html" %}
+{% block title %}{% if medicine %}Edit{% else %}Add{% endif %} Medicine — MediVault{% endblock %}
+{% block dashboard_content %}
+<h2>{% if medicine %}Edit {{ medicine.name }}{% else %}Add New Medicine{% endif %}</h2>
+<form method="post" class="panel">
+  {% csrf_token %}
+  <div class="field-row">
+    <div class="field">{{ form.name.label_tag }}{{ form.name }}</div>
+    <div class="field">{{ form.company.label_tag }}{{ form.company }}</div>
+  </div>
+  <div class="field-row">
+    <div class="field">{{ form.category.label_tag }}{{ form.category }}</div>
+    <div class="field">{{ form.form.label_tag }}{{ form.form }}</div>
+  </div>
+  <div class="field">{{ form.composition.label_tag }}{{ form.composition }}</div>
+  <div class="field">{{ form.description.label_tag }}{{ form.description }}</div>
+  <div class="field">{{ form.uses.label_tag }}{{ form.uses }}<p class="help-text">{{ form.uses.help_text }}</p></div>
+  <div class="field">{{ form.dosage.label_tag }}{{ form.dosage }}</div>
+  <div class="field">{{ form.side_effects.label_tag }}{{ form.side_effects }}<p class="help-text">{{ form.side_effects.help_text }}</p></div>
+  <div class="field">{{ form.precautions.label_tag }}{{ form.precautions }}<p class="help-text">{{ form.precautions.help_text }}</p></div>
+  <div class="field-row">
+    <div class="field">{{ form.price.label_tag }}{{ form.price }}</div>
+    <div class="field">{{ form.quantity.label_tag }}{{ form.quantity }}</div>
+  </div>
+  <div class="field-row">
+    <div class="field">{{ form.expiry.label_tag }}{{ form.expiry }}</div>
+    <div class="field">{{ form.batch_no.label_tag }}{{ form.batch_no }}</div>
+  </div>
+  <div class="field-row">
+    <div class="field">{{ form.image_emoji.label_tag }}{{ form.image_emoji }}</div>
+    <div class="field" style="display:flex;flex-direction:column;gap:10px;justify-content:flex-end;">
+      <label style="display:flex;align-items:center;gap:8px;font-weight:400;">{{ form.requires_prescription }} Requires prescription</label>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:400;">{{ form.is_active }} Active / visible in store</label>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">{% if medicine %}Save Changes{% else %}Add Medicine{% endif %}</button>
+  <a href="{% url 'store:dashboard_medicines' %}" class="btn btn-outline">Cancel</a>
+</form>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "dashboard/_base_dashboard.html" %}
+{% block title %}Manage Medicines — MediVault{% endblock %}
+{% block dashboard_content %}
+<div class="section-head">
+  <h2>Medicines</h2>
+  <a href="{% url 'store:dashboard_medicine_add' %}" class="btn btn-primary">+ Add Medicine</a>
+</div>
+
+<form method="get" class="panel" style="margin-bottom:18px;display:flex;gap:10px;">
+  <input type="text" name="q" value="{{ q }}" placeholder="Search by name or company">
+  <button type="submit" class="btn btn-outline">Search</button>
+</form>
+
+<div class="panel">
+  <table>
+    <thead><tr><th>Name</th><th>Company</th><th>Price</th><th>Stock</th><th>Expiry</th><th>Rx</th><th></th></tr></thead>
+    <tbody>
+    {% for med in page_obj %}
+      <tr>
+        <td>{{ med.name }}</td>
+        <td>{{ med.company }}</td>
+        <td class="mono">₹{{ med.price }}</td>
+        <td class="mono">{{ med.quantity }}{% if med.is_low_stock %} ⚠️{% endif %}</td>
+        <td>{{ med.expiry|date:"M Y" }}{% if med.is_expiring_soon %} ⏳{% endif %}</td>
+        <td>{% if med.requires_prescription %}Yes{% else %}—{% endif %}</td>
+        <td style="display:flex;gap:6px;">
+          <a href="{% url 'store:dashboard_medicine_edit' med.pk %}" class="btn btn-sm btn-outline">Edit</a>
+          <form action="{% url 'store:dashboard_medicine_delete' med.pk %}" method="post" onsubmit="return confirm('Remove {{ med.name }} from the catalogue?');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7" class="help-text">No medicines found.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if page_obj.has_other_pages %}
+<div class="pagination">
+  {% if page_obj.has_previous %}<a href="?q={{ q }}&page={{ page_obj.previous_page_number }}">← Prev</a>{% endif %}
+  <span class="current">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}<a href="?q={{ q }}&page={{ page_obj.next_page_number }}">Next →</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

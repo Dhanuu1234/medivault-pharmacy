@@ -1,0 +1,29 @@
+<div class="med-card">
+  <a href="{{ med.get_absolute_url }}" style="color:inherit;">
+    <div class="card-top">
+      <span class="med-emoji">{{ med.image_emoji }}</span>
+      {% if med.requires_prescription %}<span class="rx-badge">Rx Required</span>{% endif %}
+    </div>
+    <h3>{{ med.name }}</h3>
+    <div class="company">{{ med.company }} · {{ med.get_form_display }}</div>
+  </a>
+  <div class="perforation" style="margin-left:18px;margin-right:18px;"></div>
+  <div class="card-bottom">
+    <div>
+      <div class="price-tag">₹{{ med.price }}</div>
+      {% if med.is_out_of_stock %}
+        <div class="stock-note out">Out of stock</div>
+      {% elif med.is_low_stock %}
+        <div class="stock-note low">Only {{ med.quantity }} left</div>
+      {% else %}
+        <div class="stock-note">In stock</div>
+      {% endif %}
+    </div>
+    <form action="{% url 'store:cart_add' med.id %}" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="quantity" value="1">
+      <input type="hidden" name="next" value="{{ request.path }}">
+      <button type="submit" class="btn btn-sm btn-primary" {% if med.is_out_of_stock %}disabled{% endif %}>Add</button>
+    </form>
+  </div>
+</div>

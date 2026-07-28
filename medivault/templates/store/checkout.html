@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Checkout — MediVault{% endblock %}
+{% block content %}
+<div class="container wrap">
+  <h2>Checkout</h2>
+  <div class="two-col">
+    <form method="post" enctype="multipart/form-data" class="panel">
+      {% csrf_token %}
+      <h3>Shipping Details</h3>
+      <div class="field">{{ form.shipping_name.label_tag }}{{ form.shipping_name }}{{ form.shipping_name.errors }}</div>
+      <div class="field">{{ form.shipping_phone.label_tag }}{{ form.shipping_phone }}{{ form.shipping_phone.errors }}</div>
+      <div class="field">{{ form.shipping_address.label_tag }}{{ form.shipping_address }}{{ form.shipping_address.errors }}</div>
+      <div class="field-row">
+        <div class="field">{{ form.shipping_city.label_tag }}{{ form.shipping_city }}</div>
+        <div class="field">{{ form.shipping_pincode.label_tag }}{{ form.shipping_pincode }}</div>
+      </div>
+      <div class="field">{{ form.payment_method.label_tag }}{{ form.payment_method }}</div>
+
+      {% if needs_prescription %}
+        <h3 style="margin-top:22px;">Upload Prescription</h3>
+        <p class="help-text">Your cart includes at least one prescription-only medicine.</p>
+        <div class="field">{{ prescription_form.image.label_tag }}{{ prescription_form.image }}{{ prescription_form.image.errors }}</div>
+        <div class="field">{{ prescription_form.note.label_tag }}{{ prescription_form.note }}</div>
+      {% endif %}
+
+      <button type="submit" class="btn btn-primary btn-block">Place Order — ₹{{ cart.total_price }}</button>
+    </form>
+
+    <div class="panel">
+      <h3>Order Summary</h3>
+      {% for item in cart %}
+        <p style="display:flex;justify-content:space-between;font-size:.9rem;">
+          <span>{{ item.medicine.name }} × {{ item.quantity }}</span><span class="mono">₹{{ item.line_total }}</span>
+        </p>
+      {% endfor %}
+      <div class="perforation"></div>
+      <p style="display:flex;justify-content:space-between;"><span>Subtotal</span><span class="mono">₹{{ cart.total_price }}</span></p>
+      <p style="display:flex;justify-content:space-between;color:#71705f;font-size:.85rem;"><span>Delivery</span><span class="mono">{% if cart.total_price >= 500 %}FREE{% else %}₹40{% endif %}</span></p>
+    </div>
+  </div>
+</div>
+{% endblock %}
