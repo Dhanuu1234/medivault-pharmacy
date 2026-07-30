@@ -2,10 +2,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from django.http import HttpResponse
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
+    path('robots.txt', lambda r: HttpResponse("User-agent: *\nAllow: /", content_type="text/plain")),
     path("", include("store.urls")),
 ]
 
